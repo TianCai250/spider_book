@@ -4,7 +4,7 @@ let fs = require("fs");
 // 输入配置
 let config = {
   id: 15619, // 书籍号
-  totalChapterNum: 200, // 总章节数 不设置就是全本
+  totalChapterNum: 100, // 总章节数 不设置就是全本
 };
 // 爬取内容
 let book = {
