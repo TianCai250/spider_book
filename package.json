@@ -2,9 +2,9 @@
   "name": "spider_book",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start_999": "node 999_index.js",
+    "start_zzxx": "node zzxx_index.js"
   },
   "keywords": [],
   "author": "",

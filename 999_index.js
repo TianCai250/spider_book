@@ -4,8 +4,7 @@ let fs = require("fs");
 // 输入配置
 let config = {
   id: 89993, // 书籍号
-  chapterId: 53729272, // 起始章节id
-  totalChapterNum: 448, // 总章节数
+  totalChapterNum: 400, // 总章节数 不设置就是全本
 };
 // 爬取内容
 let book = {
@@ -13,6 +12,8 @@ let book = {
   content: [], // 内容 {id: 1, chapter: '第一章', text: '...'}
 };
 
+// 章节目录
+let menu = [];
 // 当前章节
 let chapterId = 1;
 // 当前章节的总页数
@@ -25,7 +26,9 @@ let ws;
 let get = () => {
   //发起请求
   request(
-    `http://www.999txt.cc/readbook/89993/${config.chapterId}_${page}.html`,
+    `http://www.999txt.cc/readbook/${config.id}/${
+      menu[chapterId - 1]
+    }_${page}.html`,
     function (error, response, body) {
       try {
         if (!error && response.statusCode == 200) {
@@ -76,7 +79,6 @@ let get = () => {
           if (page === totalPage) {
             // 下一章
             chapterId++;
-            config.chapterId++;
             page = 1;
             totalPage = 0;
             console.log(`第${chapterId - 1}结束`);
@@ -85,7 +87,7 @@ let get = () => {
           }
 
           // 总共几章就填几
-          if (chapterId <= config.totalChapterNum) {
+          if (chapterId <= config.totalChapterNum || menu.length) {
             // 一秒爬一次
             setTimeout(get, 1000);
           } else {
@@ -108,4 +110,39 @@ let get = () => {
   );
 };
 
-get();
+// 获取目录
+const getMenu = () => {
+  request(
+    `http://www.999txt.cc/txt/${config.id}.html`,
+    function (error, response, body) {
+      try {
+        if (!error && response.statusCode == 200) {
+          // 爬取目录
+          let regex = new RegExp(
+            `<dd><a href="\/readbook\/${config.id}([\\s\\S]*)<\/a><\/dd>`,
+            "i"
+          );
+          menu = body
+            .match(
+              /<div id="list-chapterAll" style="display:block;">([\s\S]*)<\/div>/i
+            )[0]
+            .match(regex)[0]
+            .split("</a></dd>")
+            .map(
+              (item) =>
+                item
+                  .replace(`<dd><a href="/readbook/${config.id}/`, "")
+                  .split(".html")[0]
+            )
+            .map((item) => item.replace(/[\r\n\t ]/g, ""));
+          // 爬取书籍
+          get();
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  );
+};
+
+getMenu();

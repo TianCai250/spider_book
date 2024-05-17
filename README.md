@@ -2,19 +2,21 @@
 
 ## 使用
 
-- 在该网站找到想要爬取的小说:http://www.999txt.cc/,配上链接上的书籍id和章节id
+- 在以下网站找到想要爬取的小说，从url中找到书籍号
+  http://www.999txt.cc/
+  https://m.zzxx.org/xs/15619/all.html
   如:
 
 ```js
 let config = {
   id: 89993, // 书籍号
-  chapterId: 53729272, // 起始章节id
-  totalChapterNum: 448, // 总章节数
+  totalChapterNum: 448, // 爬取章节数  不设置就是全本
 };
 ```
 
 - 运行
 
 ```cmd
-npm start
+npm run start_999
+npm run start_zzxx
 ```
