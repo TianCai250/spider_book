@@ -10,7 +10,7 @@
 ```js
 let config = {
   id: 89993, // 书籍号
-  totalChapterNum: 448, // 爬取章节数  不设置就是全本
+  totalChapterNum: 448, // 爬取章节数  不设置就是全本（最好别太多，可能会退出）
 };
 ```
 

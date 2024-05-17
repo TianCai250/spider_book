@@ -4,7 +4,7 @@ let fs = require("fs");
 // 输入配置
 let config = {
   id: 15619, // 书籍号
-  totalChapterNum: 0, // 总章节数 不设置就是全本
+  totalChapterNum: 200, // 总章节数 不设置就是全本
 };
 // 爬取内容
 let book = {
@@ -59,7 +59,7 @@ let get = () => {
           console.log(`第${chapterId - 1}结束`);
 
           // 总共几章就填几
-          if (chapterId <= config.totalChapterNum || menu.length) {
+          if (chapterId <= (config.totalChapterNum || menu.length)) {
             // 一秒爬一次
             setTimeout(get, 1000);
           } else {

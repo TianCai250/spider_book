@@ -87,7 +87,7 @@ let get = () => {
           }
 
           // 总共几章就填几
-          if (chapterId <= config.totalChapterNum || menu.length) {
+          if (chapterId <= (config.totalChapterNum || menu.length)) {
             // 一秒爬一次
             setTimeout(get, 1000);
           } else {
