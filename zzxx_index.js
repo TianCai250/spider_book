@@ -4,25 +4,22 @@ let fs = require("fs");
 // 输入配置
 let config = {
   id: 15619, // 书籍号
-  totalChapterNum: 100, // 总章节数 不设置就是全本
+  chapterId: 1, // 开始章节
+  totalChapterNum: 2, // 总章节数 不设置就是全本
 };
 // 爬取内容
 let book = {
   title: "", // 书名
+  menu: [], // 章节目录
   content: [], // 内容 {id: 1, chapter: '第一章', text: '...'}
 };
-
-// 章节目录
-let menu = [];
-// 当前章节
-let chapterId = 1;
-//写入流
-let ws;
 
 let get = () => {
   //发起请求
   request(
-    `https://m.zzxx.org/xs/${config.id}/${menu[chapterId - 1]}.html`,
+    `https://m.zzxx.org/xs/${config.id}/${
+      book.menu[config.chapterId - 1]
+    }.html`,
     function (error, response, body) {
       try {
         if (!error && response.statusCode == 200) {
@@ -50,20 +47,22 @@ let get = () => {
             .replace(/<br>/g, "\r\n");
 
           book.content.push({
-            id: chapterId,
+            id: config.chapterId,
             chapter: chapter,
             text: text,
           });
 
-          chapterId++;
-          console.log(`第${chapterId - 1}结束`);
+          config.chapterId++;
+          console.log(`第${config.chapterId - 1}结束`);
 
           // 总共几章就填几
-          if (chapterId <= (config.totalChapterNum || menu.length)) {
+          if (
+            config.chapterId <= (config.totalChapterNum || book.menu.length)
+          ) {
             // 一秒爬一次
             setTimeout(get, 1000);
           } else {
-            ws = fs.createWriteStream("./books/" + book.title + ".txt");
+            let ws = fs.createWriteStream("./books/" + book.title + ".txt");
             ws.write(book.title + "\r\n\r\n\r\n", "utf8");
             book.content.forEach((item) => {
               ws.write(item.chapter + "\r\n\r\n", "utf8");
@@ -90,7 +89,7 @@ const getMenu = () => {
       try {
         if (!error && response.statusCode == 200) {
           // 爬取目录
-          menu = body
+          book.menu = body
             .match(/<ul class="chapter">([\s\S]*)<\/ul>/i)[0]
             .match(
               new RegExp(`<a href="\/xs\/${config.id}\/([\\s\\S]*)<\/a>`, "i")

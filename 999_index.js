@@ -4,18 +4,16 @@ let fs = require("fs");
 // 输入配置
 let config = {
   id: 89993, // 书籍号
-  totalChapterNum: 400, // 总章节数 不设置就是全本
+  chapterId: 1, // 开始章节
+  totalChapterNum: 2, // 总章节数 不设置就是全本
 };
 // 爬取内容
 let book = {
   title: "", // 书名
+  menu: [], // 章节目录
   content: [], // 内容 {id: 1, chapter: '第一章', text: '...'}
 };
 
-// 章节目录
-let menu = [];
-// 当前章节
-let chapterId = 1;
 // 当前章节的总页数
 let totalPage = 0;
 // 当前章节的页码
@@ -27,7 +25,7 @@ let get = () => {
   //发起请求
   request(
     `http://www.999txt.cc/readbook/${config.id}/${
-      menu[chapterId - 1]
+      book.menu[config.chapterId - 1]
     }_${page}.html`,
     function (error, response, body) {
       try {
@@ -67,7 +65,7 @@ let get = () => {
             .replace(/<\/p>/g, "\r\n");
           if (page === 1) {
             book.content.push({
-              id: chapterId,
+              id: config.chapterId,
               chapter: chapter.split("（")[0],
               text: text,
             });
@@ -78,16 +76,17 @@ let get = () => {
 
           if (page === totalPage) {
             // 下一章
-            chapterId++;
+            config.chapterId++;
             page = 1;
             totalPage = 0;
-            console.log(`第${chapterId - 1}结束`);
+            console.log(`第${config.chapterId - 1}结束`);
           } else {
             page++;
           }
-
           // 总共几章就填几
-          if (chapterId <= (config.totalChapterNum || menu.length)) {
+          if (
+            config.chapterId <= (config.totalChapterNum || book.menu.length)
+          ) {
             // 一秒爬一次
             setTimeout(get, 1000);
           } else {
@@ -122,7 +121,7 @@ const getMenu = () => {
             `<dd><a href="\/readbook\/${config.id}([\\s\\S]*)<\/a><\/dd>`,
             "i"
           );
-          menu = body
+          book.menu = body
             .match(
               /<div id="list-chapterAll" style="display:block;">([\s\S]*)<\/div>/i
             )[0]
