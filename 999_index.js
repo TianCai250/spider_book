@@ -18,8 +18,6 @@ let book = {
 let totalPage = 0;
 // 当前章节的页码
 let page = 1;
-//写入流
-let ws;
 
 let get = () => {
   //发起请求
@@ -90,7 +88,7 @@ let get = () => {
             // 一秒爬一次
             setTimeout(get, 1000);
           } else {
-            ws = fs.createWriteStream("./books/" + book.title + ".txt");
+            let ws = fs.createWriteStream("./books/" + book.title + ".txt");
             ws.write(book.title + "\r\n\r\n\r\n", "utf8");
             book.content.forEach((item) => {
               ws.write(item.chapter + "\r\n\r\n", "utf8");

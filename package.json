@@ -4,12 +4,15 @@
   "description": "",
   "scripts": {
     "start_999": "node 999_index.js",
-    "start_zzxx": "node zzxx_index.js"
+    "start_zzxx": "node zzxx_index.js",
+    "start_sk": "node sk_index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "axios": "^1.7.2",
+    "cheerio": "^1.0.0-rc.12",
     "request": "^2.88.2"
   }
 }
